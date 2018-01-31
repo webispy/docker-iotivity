@@ -59,8 +59,8 @@ RUN git clone --depth 1 https://github.com/iotivity/iotivity -b 1.3-rel \
 	&& git clone --depth 1 https://github.com/01org/tinycbor.git extlibs/tinycbor/tinycbor -b v0.4.1 \
 	&& git clone --depth 1 https://github.com/ARMmbed/mbedtls.git extlibs/mbedtls/mbedtls -b mbedtls-2.4.2 \
 	&& git apply /tmp/static.patch \
-	&& scons SECURED=${SECURED} RELEASE=${RELEASE} RD_MODE=CLIENT LOG_LEVEL=${LOG_LEVEL} TARGET_TRANSPORT=IP -j8 --prefix=${PREFIX} \
-	&& scons SECURED=${SECURED} RELEASE=${RELEASE} RD_MODE=CLIENT LOG_LEVEL=${LOG_LEVEL} TARGET_TRANSPORT=IP -j8 --prefix=${PREFIX} install \
+	&& scons SECURED=${SECURED} RELEASE=${RELEASE} RD_MODE=CLIENT LOG_LEVEL=${LOG_LEVEL} TARGET_TRANSPORT=IP -j4 --prefix=${PREFIX} \
+	&& scons SECURED=${SECURED} RELEASE=${RELEASE} RD_MODE=CLIENT LOG_LEVEL=${LOG_LEVEL} TARGET_TRANSPORT=IP -j4 --prefix=${PREFIX} install \
 	&& cd .. \
 	&& rm -rf iotivity \
 	&& rm /tmp/static.patch
