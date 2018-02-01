@@ -1,0 +1,142 @@
+From 4312aa32c4955594b15b94ce383405dd22b79fda Mon Sep 17 00:00:00 2001
+From: Inho Oh <webispy@gmail.com>
+Date: Thu, 1 Feb 2018 15:25:50 +0900
+Subject: [PATCH 1/4] scons: add missing header files to install
+
+Signed-off-by: Inho Oh <webispy@gmail.com>
+---
+ resource/csdk/connectivity/src/SConscript | 54 +++++++++++++++++++++++++++++++
+ resource/csdk/logger/SConscript           |  5 +++
+ resource/csdk/security/SConscript         | 44 +++++++++++++++++++++++++
+ 3 files changed, 103 insertions(+)
+
+diff --git a/resource/csdk/connectivity/src/SConscript b/resource/csdk/connectivity/src/SConscript
+index 9696ea7..0b397c7 100644
+--- a/resource/csdk/connectivity/src/SConscript
++++ b/resource/csdk/connectivity/src/SConscript
+@@ -184,3 +184,57 @@ elif ca_os not in ['msys_nt', 'windows']:
+ 
+ connectivity_env.InstallTarget(calib, 'connectivity_abstraction')
+ connectivity_env.UserInstallTargetLib(calib, 'connectivity_abstraction')
++connectivity_env.UserInstallTargetHeader(
++    '../api/cacommon.h', 'resource', 'cacommon.h')
++connectivity_env.UserInstallTargetHeader(
++    '../api/cainterface.h', 'resource', 'cainterface.h')
++connectivity_env.UserInstallTargetHeader(
++    '../api/casecurityinterface.h', 'resource', 'casecurityinterface.h')
++connectivity_env.UserInstallTargetHeader(
++    '../api/cautilinterface.h', 'resource', 'cautilinterface.h')
++connectivity_env.UserInstallTargetHeader(
++    '../lib/libcoap-4.1.1/include/coap/address.h', 'resource/coap', 'address.h')
++connectivity_env.UserInstallTargetHeader(
++    '../lib/libcoap-4.1.1/include/coap/async.h', 'resource/coap', 'async.c')
++connectivity_env.UserInstallTargetHeader(
++    '../lib/libcoap-4.1.1/include/coap/bits.h', 'resource/coap', 'bits.h')
++connectivity_env.UserInstallTargetHeader(
++    '../lib/libcoap-4.1.1/include/coap/block.h', 'resource/coap', 'block.h')
++connectivity_env.UserInstallTargetHeader(
++    '../lib/libcoap-4.1.1/include/coap/coap.h', 'resource/coap', 'coap.h')
++connectivity_env.UserInstallTargetHeader(
++    '../lib/libcoap-4.1.1/include/coap/coap_list.h', 'resource/coap', 'coap_list.h')
++connectivity_env.UserInstallTargetHeader(
++    '../lib/libcoap-4.1.1/include/coap/coap_time.h', 'resource/coap', 'coap_time.h')
++connectivity_env.UserInstallTargetHeader(
++    '../lib/libcoap-4.1.1/include/coap/config.h', 'resource/coap', 'config.h')
++connectivity_env.UserInstallTargetHeader(
++    '../lib/libcoap-4.1.1/include/coap/debug.h', 'resource/coap', 'debug.h')
++connectivity_env.UserInstallTargetHeader(
++    '../lib/libcoap-4.1.1/include/coap/encode.h', 'resource/coap', 'encode.h')
++connectivity_env.UserInstallTargetHeader(
++    '../lib/libcoap-4.1.1/include/coap/hashkey.h', 'resource/coap', 'hashkey.h')
++connectivity_env.UserInstallTargetHeader(
++    '../lib/libcoap-4.1.1/include/coap/mem.h', 'resource/coap', 'mem.h')
++connectivity_env.UserInstallTargetHeader(
++    '../lib/libcoap-4.1.1/include/coap/net.h', 'resource/coap', 'net.h')
++connectivity_env.UserInstallTargetHeader(
++    '../lib/libcoap-4.1.1/include/coap/option.h', 'resource/coap', 'option.h')
++connectivity_env.UserInstallTargetHeader(
++    '../lib/libcoap-4.1.1/include/coap/pdu.h', 'resource/coap', 'pdu.h')
++connectivity_env.UserInstallTargetHeader(
++    '../lib/libcoap-4.1.1/include/coap/prng.h', 'resource/coap', 'prng.h')
++connectivity_env.UserInstallTargetHeader(
++    '../lib/libcoap-4.1.1/include/coap/resource.h', 'resource/coap', 'resource.h')
++connectivity_env.UserInstallTargetHeader(
++    '../lib/libcoap-4.1.1/include/coap/str.h', 'resource/coap', 'str.h')
++connectivity_env.UserInstallTargetHeader(
++    '../lib/libcoap-4.1.1/include/coap/subscribe.h', 'resource/coap', 'subscribe.h')
++connectivity_env.UserInstallTargetHeader(
++    '../lib/libcoap-4.1.1/include/coap/t_list.h', 'resource/coap', 't_list.h')
++connectivity_env.UserInstallTargetHeader(
++    '../lib/libcoap-4.1.1/include/coap/uri.h', 'resource/coap', 'uri.h')
++connectivity_env.UserInstallTargetHeader(
++    '../lib/libcoap-4.1.1/include/coap/uthash.h', 'resource/coap', 'uthash.h')
++connectivity_env.UserInstallTargetHeader(
++    '../lib/libcoap-4.1.1/include/coap/utlist.h', 'resource/coap', 'utlist.h')
+diff --git a/resource/csdk/logger/SConscript b/resource/csdk/logger/SConscript
+index bfdfd2c..2cb4add 100644
+--- a/resource/csdk/logger/SConscript
++++ b/resource/csdk/logger/SConscript
+@@ -39,3 +39,8 @@ else:
+ 
+ loggerlib = local_env.StaticLibrary('logger', logger_src)
+ local_env.InstallTarget(loggerlib, 'logger')
++local_env.UserInstallTargetLib(loggerlib, 'logger')
++local_env.UserInstallTargetHeader('include/logger_types.h',
++                                  'c_common', 'logger_types.h')
++local_env.UserInstallTargetHeader('include/logger.h',
++                                  'c_common', 'logger.h')
+diff --git a/resource/csdk/security/SConscript b/resource/csdk/security/SConscript
+index 2daa1ae..fbac38f 100644
+--- a/resource/csdk/security/SConscript
++++ b/resource/csdk/security/SConscript
+@@ -150,3 +150,47 @@ libocsrm_env.InstallTarget(libocsrm, 'ocsrm')
+ libocsrm_env.UserInstallTargetHeader(
+     'include/experimental/securevirtualresourcetypes.h',
+     'resource/stack/experimental', 'securevirtualresourcetypes.h')
++
++libocsrm_env.UserInstallTargetHeader(
++    'include/base64.h', 'resource/stack', 'base64.h')
++libocsrm_env.UserInstallTargetHeader(
++    'include/iotvticalendar.h', 'resource/stack', 'iotvticalendar.h')
++libocsrm_env.UserInstallTargetHeader(
++    'include/occertutility.h', 'resource/stack', 'occertutility.h')
++libocsrm_env.UserInstallTargetHeader(
++    'include/ocsecurity.h', 'resource/stack', 'ocsecurity.h')
++libocsrm_env.UserInstallTargetHeader(
++    'include/oxmverifycommon.h', 'resource/stack', 'oxmverifycommon.h')
++libocsrm_env.UserInstallTargetHeader(
++    'include/pbkdf2.h', 'resource/stack', 'pbkdf2.h')
++libocsrm_env.UserInstallTargetHeader(
++    'include/pinoxmcommon.h', 'resource/stack', 'pinoxmcommon.h')
++libocsrm_env.UserInstallTargetHeader(
++    'include/pkix_interface.h', 'resource/stack', 'pkix_interface.h')
++libocsrm_env.UserInstallTargetHeader(
++    'include/srmutility.h', 'resource/stack', 'srmutility.h')
++
++libocsrm_env.UserInstallTargetHeader(
++    'include/internal/aclresource.h', 'resource/stack', 'aclresource.h')
++libocsrm_env.UserInstallTargetHeader(
++    'include/internal/amaclresource.h', 'resource/stack', 'amaclresource.h')
++libocsrm_env.UserInstallTargetHeader(
++    'include/internal/credresource.h', 'resource/stack', 'credresource.h')
++libocsrm_env.UserInstallTargetHeader(
++    'include/internal/crlresource.h', 'resource/stack', 'crlresource.h')
++libocsrm_env.UserInstallTargetHeader(
++    'include/internal/csrresource.h', 'resource/stack', 'csrresource.h')
++libocsrm_env.UserInstallTargetHeader(
++    'include/internal/deviceonboardingstate.h', 'resource/stack', 'deviceonboardingstate.h')
++libocsrm_env.UserInstallTargetHeader(
++    'include/internal/doxmresource.h', 'resource/stack', 'doxmresource.h')
++libocsrm_env.UserInstallTargetHeader(
++    'include/internal/policyengine.h', 'resource/stack', 'policyengine.h')
++libocsrm_env.UserInstallTargetHeader(
++    'include/internal/psinterface.h', 'resource/stack', 'psinterface.h')
++libocsrm_env.UserInstallTargetHeader(
++    'include/internal/pstatresource.h', 'resource/stack', 'pstatresource.h')
++libocsrm_env.UserInstallTargetHeader(
++    'include/internal/resourcemanager.h', 'resource/stack', 'resourcemanager.h')
++libocsrm_env.UserInstallTargetHeader(
++    'include/internal/srmresourcestrings.h', 'resource/stack', 'srmresourcestrings.h')
+-- 
+2.7.4
+

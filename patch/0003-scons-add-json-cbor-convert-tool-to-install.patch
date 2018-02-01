@@ -1,0 +1,24 @@
+From 1af5a91f69b4ba445699d627deac76ab2f126af7 Mon Sep 17 00:00:00 2001
+From: Inho Oh <webispy@gmail.com>
+Date: Thu, 1 Feb 2018 15:28:21 +0900
+Subject: [PATCH 3/4] scons: add json/cbor convert tool to install
+
+Signed-off-by: Inho Oh <webispy@gmail.com>
+---
+ resource/csdk/security/tool/SConscript | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/resource/csdk/security/tool/SConscript b/resource/csdk/security/tool/SConscript
+index d8d073c..4c0fc2e 100644
+--- a/resource/csdk/security/tool/SConscript
++++ b/resource/csdk/security/tool/SConscript
+@@ -100,3 +100,6 @@ svrdbeditor_src = [
+ svrdbeditor = tools_env.Program("svrdbeditor", svrdbeditor_src)
+ Alias("securitytool", [json2cbor, svrdbeditor])
+ tools_env.AppendTarget('securitytool')
++
++tools_env.UserInstallTargetBin(json2cbor, 'json2cbor')
++tools_env.UserInstallTargetBin(svrdbeditor, 'json2cbor')
+-- 
+2.7.4
+

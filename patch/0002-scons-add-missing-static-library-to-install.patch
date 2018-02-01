@@ -1,0 +1,68 @@
+From d7ae459b085eb7c3e3306e4b27fdcd99f6538203 Mon Sep 17 00:00:00 2001
+From: Inho Oh <webispy@gmail.com>
+Date: Thu, 1 Feb 2018 15:27:31 +0900
+Subject: [PATCH 2/4] scons: add missing static library to install
+
+Signed-off-by: Inho Oh <webispy@gmail.com>
+---
+ extlibs/libcoap/SConscript        | 2 +-
+ extlibs/mbedtls/SConscript        | 3 +++
+ resource/csdk/routing/SConscript  | 1 +
+ resource/csdk/security/SConscript | 1 +
+ 4 files changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/extlibs/libcoap/SConscript b/extlibs/libcoap/SConscript
+index 3dd8bf6..bb00487 100644
+--- a/extlibs/libcoap/SConscript
++++ b/extlibs/libcoap/SConscript
+@@ -331,4 +331,4 @@ libcoap = libcoap_env.StaticLibrary('coap', libcoap_src, OBJPREFIX='libcoap_')
+ 
+ Clean(libcoap, config_h_file_path)
+ libcoap_env.InstallTarget([libcoap], 'coap')
+-
++libcoap_env.UserInstallTargetLib(libcoap, 'coap')
+diff --git a/extlibs/mbedtls/SConscript b/extlibs/mbedtls/SConscript
+index cf350db..6e7e559 100644
+--- a/extlibs/mbedtls/SConscript
++++ b/extlibs/mbedtls/SConscript
+@@ -220,12 +220,15 @@ mbeX509_src = [
+ mbedcrypto_env = mbedtls_env.Clone()
+ static_libmbedcrypto = mbedcrypto_env.StaticLibrary('mbedcrypto', mbedcrypto_src)
+ mbedcrypto_env.InstallTarget(static_libmbedcrypto, 'mbedcrypto')
++mbedcrypto_env.UserInstallTargetLib(static_libmbedcrypto, 'mbedcrypto')
+ 
+ mbex509_env = mbedtls_env.Clone()
+ mbex509_env.AppendUnique(LIBS=['mbedcrypto'])
+ static_libmbedx509 = mbex509_env.StaticLibrary('mbedx509', mbeX509_src)
+ mbex509_env.InstallTarget(static_libmbedx509, 'mbedx509')
++mbex509_env.UserInstallTargetLib(static_libmbedx509, 'mbedx509')
+ 
+ mbedtls_env.AppendUnique(LIBS=['mbedx509', 'mbedcrypto'])
+ static_libmbedtls = mbedtls_env.StaticLibrary('mbedtls', mbedtls_src)
+ mbedtls_env.InstallTarget(static_libmbedtls, 'mbedtls')
++mbedtls_env.UserInstallTargetLib(static_libmbedtls, 'mbedtls')
+diff --git a/resource/csdk/routing/SConscript b/resource/csdk/routing/SConscript
+index 8c709bd..3c78d32 100644
+--- a/resource/csdk/routing/SConscript
++++ b/resource/csdk/routing/SConscript
+@@ -56,4 +56,5 @@ elif env.get('ROUTING') == 'EP':
+ 
+ routinglib = local_env.StaticLibrary('routingmanager', routing_src)
+ local_env.InstallTarget(routinglib, 'routingmanager')
++local_env.UserInstallTargetLib(routinglib, 'routingmanager')
+ 
+diff --git a/resource/csdk/security/SConscript b/resource/csdk/security/SConscript
+index fbac38f..894c862 100644
+--- a/resource/csdk/security/SConscript
++++ b/resource/csdk/security/SConscript
+@@ -147,6 +147,7 @@ if target_os in ['arduino']:
+ libocsrm = libocsrm_env.StaticLibrary('ocsrm', libocsrm_src)
+ 
+ libocsrm_env.InstallTarget(libocsrm, 'ocsrm')
++libocsrm_env.UserInstallTargetLib(libocsrm, 'ocsrm')
+ libocsrm_env.UserInstallTargetHeader(
+     'include/experimental/securevirtualresourcetypes.h',
+     'resource/stack/experimental', 'securevirtualresourcetypes.h')
+-- 
+2.7.4
+

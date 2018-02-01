@@ -1,0 +1,77 @@
+From 573cfbf3d257d471915f34a097e6b2bdad3ab74a Mon Sep 17 00:00:00 2001
+From: Inho Oh <webispy@gmail.com>
+Date: Thu, 1 Feb 2018 15:29:29 +0900
+Subject: [PATCH 4/4] scons: disable unused module from build
+
+Signed-off-by: Inho Oh <webispy@gmail.com>
+---
+ SConstruct                 | 12 ++++++------
+ extlibs/mbedtls/SConscript |  3 ++-
+ service/SConscript         |  4 ++--
+ 3 files changed, 10 insertions(+), 9 deletions(-)
+
+diff --git a/SConstruct b/SConstruct
+index 0da7e31..36256b4 100644
+--- a/SConstruct
++++ b/SConstruct
+@@ -71,17 +71,17 @@ if (env.get('BUILD_JAVA') and env.get('JAVA_HOME')) or target_os == 'android':
+     java_build = SConscript(build_dir + 'java/SConscript')
+ 
+ # Build 'service' sub-project
+-service_build = SConscript(build_dir + 'service/SConscript')
++#service_build = SConscript(build_dir + 'service/SConscript')
+ 
+ if java_build:
+     Depends(service_build, java_build)
+ 
+ # Build other sub-projects
+-SConscript(dirs=[
+-    build_dir + 'cloud',
+-    build_dir + 'plugins',
+-    build_dir + 'bridging',
+-])
++#SConscript(dirs=[
++#    build_dir + 'cloud',
++#    build_dir + 'plugins',
++#    build_dir + 'bridging',
++#])
+ 
+ # Append target information to the help information (if needed)
+ # To see help info, execute:
+diff --git a/extlibs/mbedtls/SConscript b/extlibs/mbedtls/SConscript
+index 6e7e559..0832782 100644
+--- a/extlibs/mbedtls/SConscript
++++ b/extlibs/mbedtls/SConscript
+@@ -94,7 +94,8 @@ if not found:
+     if os.path.exists('.git/HEAD'):
+         # Apply ocf patch on git revision
+         print("Syncing/patching mbedtls external project...")
+-        cmd = 'git checkout -f development && git reset --hard ' + mbedtls_revision + ' && git clean -f && git apply --whitespace=fix ../ocf.patch'
++        # cmd = 'git checkout -f development && git reset --hard ' + mbedtls_revision + ' && git clean -f && git apply --whitespace=fix ../ocf.patch'
++        cmd = 'git apply --whitespace=fix ../ocf.patch'
+         res = os.system(cmd)
+     else:
+         # Fallback to regular patch command
+diff --git a/service/SConscript b/service/SConscript
+index ddb3075..d58da0a 100755
+--- a/service/SConscript
++++ b/service/SConscript
+@@ -26,7 +26,7 @@ Import('env')
+ 
+ target_os = env.get('TARGET_OS')
+ 
+-if target_os not in ['arduino', 'darwin', 'windows']:
++if target_os not in ['arduino', 'darwin', 'windows', 'linux']:
+     # Build resource-encapsulation project
+     SConscript('resource-encapsulation/SConscript')
+ 
+@@ -50,5 +50,5 @@ if target_os not in ['arduino', 'darwin', 'windows']:
+         SConscript('coap-http-proxy/SConscript')
+ 
+ # Build EasySetup module
+-if target_os in ['arduino', 'android', 'ios', 'linux', 'tizen']:
++if target_os in ['arduino', 'android', 'ios', 'tizen']:
+     SConscript('easy-setup/SConscript')
+-- 
+2.7.4
+
