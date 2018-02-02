@@ -1,0 +1,14 @@
+language: generic
+sudo: required
+services:
+- docker
+env:
+  global:
+    secure: ch+xO3Uy/BlDURTBeLTh28vrdAgsD65EvueJDe/X8zoCWMbLZAHw9kVT7YQH8WSn3QBWbCNuRW/yFSt+j+Y48c+4tFuzaFaxwRXqGBzhbjxleT3aIGgkoa3xU9+WnbsV4HfRCSzd4yfN08jN0Ob8/fmN1poQJeGsQj46yfhJe9/AT52CSeI+v/fYLDzou8FfzOakDAPOyYQpLmUHrX4vrXTZWPmgqCYytrl8o0GmobGAHYMskL2KXaTV4VmyoKmVFpRlhPL7rgbqcoZ0GTI7RCG5UY0cMIGUnwD6h6/A4XveP6KhcL9tWs3iJXt0MlkYAy6RXuNgSrKZjjHd1Atx1h65k6c2p5++OqVpnCBdKq49eHpUOeiP2/UuOytDtzHZzSr/sQRRYfA6ImvdGg1d8UorXSAtxGljNGS2hvqq4oYbP4eWGbAvczB3Pw/YUT2sLk89BEp3gK0QrjGvg6wR59ywuDUksGloBeFYsMqWx2XAMeup9r1clCybuAubZdKYjb/rynoPOhvcFYidMa6xylpMzz23L6PXT0qxbgfnxyB6cIAOhifS17E/KuaxaRSLez0/AhZK4YgoKr47HGN8ntl5i3UdLpkfXluqJWyq0LH0C8ULkQdJEfSvyzJO+hNS7muoOHgRLziP9tSDIkZf1krHdaFJXwOUSp32R1xS/SQ=
+script:
+- docker build -t iotivity .
+- docker images
+after_success:
+- docker login -u webispy -p $DOCKER_PASS
+- docker tag iotivity webispy/iotivity
+- docker push webispy/iotivity
