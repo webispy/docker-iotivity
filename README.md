@@ -2,18 +2,23 @@
 
 # docker-iotivity
 
-## IoTivity
+- Based IoTivity 1.3.1
+- IoTivity stack was built with the SECURED=1 option.
+- Includes tools to conver JSON to CBOR. (json2cbor, svrdbeditor)
+- Support build with IoTivity static library. (Custom patch has been applied.)
 
-- Base commit: 1.3-rel branch, 1.3.1 tag
-- Build option: SECURED=1 LOG_LEVEL=ERROR RD_MODE=CLIENT RELEASE=False TARGET_TRANSPORT=IP
-
-## build test
+# Build test
 
 ```sh
-$ git clone https://github.com/webispy/docker-iotivity
-$ docker build docker-iotivity -t iotivity
-$ docker run -it --rm -v {your-path}/docker-iotivity/sample:/src iotivity bash -c "rm -rf src/build; mkdir src/build; cd src/build; cmake ..; make"
+# Get sample code
+$ docker clone https://github.com/webispy/docker-iotivity
+
+# Build
+$ docker run -t --rm -v {your-path}/docker-iotivity/sample:/src webispy/iotivity \
+		bash -c "rm -rf src/build; mkdir src/build; cd src/build; cmake ..; make"
+
+# Run the sample program(static build)
 $ cd docker-iotivity/sample/build
-$ ./myclient
+$ ./myclient_static
 ```
 

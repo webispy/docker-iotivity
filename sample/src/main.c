@@ -1,14 +1,11 @@
 #include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <unistd.h>
 #include <time.h>
-#include <sys/time.h>
-
 #include <iotivity_config.h>
 #include <platform_features.h>
 #include <ocstack.h>
 #include <ocpayload.h>
+
+#include "security.h"
 
 static OCStackApplicationResult on_discovery(void *ctx, OCDoHandle handle,
 		OCClientResponse *resp)
@@ -41,6 +38,9 @@ int main(int argc, char *argv[])
 
 	printf("\nIoTivity(%s) client\n", IOTIVITY_VERSION);
 
+	if (my_client_security_init() < 0)
+		return -1;
+
 	printf("Start IoTivity stack...\n");
 
 	if (OCInit(NULL, 0, OC_CLIENT) != OC_STACK_OK) {
@@ -58,6 +58,7 @@ int main(int argc, char *argv[])
 			printf("OCStack process error\n");
 			return -1;
 		}
+
 		nanosleep(&timeout, NULL);
 	}
 
