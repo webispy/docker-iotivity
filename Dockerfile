@@ -1,13 +1,47 @@
-FROM webispy/iotivity:base as builder
+# Temporary image for IoTivity build
+FROM ubuntu:xenial as builder
 ARG RELEASE=false
 ARG LOG_LEVEL=ERROR
 ARG SECURED=1
+
 # Use PREFIX to /out instead of /usr to remove RPATH
 ENV RELEASE=$RELEASE \
     LOG_LEVEL=$LOG_LEVEL \
     SECURED=$SECURED \
-    PREFIX=/out
+    PREFIX=/out \
+	DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y \
+		ca-certificates language-pack-en \
+		build-essential \
+		git \
+		scons \
+		ssh \
+		unzip \
+		sudo \
+		valgrind \
+		doxygen \
+		libtool \
+		autoconf \
+		pkg-config \
+		libboost-all-dev \
+		libsqlite3-dev \
+		uuid-dev \
+		libglib2.0-dev \
+		libcurl4-gnutls-dev \
+		libbz2-dev \
+		cmake \
+		chrpath \
+		rpm \
+		ubuntu-dev-tools \
+		debhelper \
+		sed \
+		apt-utils \
+		&& apt-get clean \
+		&& rm -rf /var/lib/apt/lists/*
+
 COPY patch/* /tmp/
+
 # - clone iotivity and related sources
 # - apply custom patch (patch/*)
 # - remove RPATH from executable and shared library
@@ -25,9 +59,11 @@ RUN git clone --depth 1 http://github.com/iotivity/iotivity -b 1.3.1 \
 	&& sed -i 's/prefix=\/out/prefix=\/usr/g' /out/lib/pkgconfig/iotivity.pc \
 	&& rm -rf /iotivity
 
+# Release image
+# - included git, pkg-config and cmake for convenience
 FROM ubuntu:xenial
 LABEL maintainer="webispy@gmail.com" \
-      version="0.2" \
+      version="0.3" \
       description="IoTivity development environment"
 RUN apt-get update && apt-get install -y --no-install-recommends \
 		build-essential \
