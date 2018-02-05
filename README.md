@@ -22,3 +22,11 @@ $ cd docker-iotivity/sample/build
 $ ./myclient_static
 ```
 
+# Export IoTivity development files
+
+```sh
+# Export iotivity header/library to ~/my_usr directory.
+$ docker run -t --rm -v ~/my_usr:/target webispy/iotivity iotivity_export.sh /target
+$ ls ~/my_usr
+...
+```

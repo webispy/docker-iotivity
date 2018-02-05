@@ -9,7 +9,7 @@ ENV RELEASE=$RELEASE \
     LOG_LEVEL=$LOG_LEVEL \
     SECURED=$SECURED \
     PREFIX=/out \
-	DEBIAN_FRONTEND=noninteractive
+    DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y \
 		ca-certificates language-pack-en \
@@ -57,19 +57,25 @@ RUN git clone --depth 1 http://github.com/iotivity/iotivity -b 1.3.1 \
 	&& find /out -type f -executable -exec chrpath -d "{}" \; \
 	&& find /out -type f -iname "lib*.so" -exec chrpath -d "{}" \; \
 	&& sed -i 's/prefix=\/out/prefix=\/usr/g' /out/lib/pkgconfig/iotivity.pc \
+	&& find /out/* | tee /iotivity.list \
+	&& sed -i 's/\/out/\/usr/g' /iotivity.list \
 	&& rm -rf /iotivity
 
 # Release image
 # - included git, pkg-config and cmake for convenience
 FROM ubuntu:xenial
 LABEL maintainer="webispy@gmail.com" \
-      version="0.3" \
+      version="0.4" \
       description="IoTivity development environment"
 RUN apt-get update && apt-get install -y --no-install-recommends \
 		build-essential \
 		git \
 		pkg-config \
 		cmake \
+		rsync \
+		libglib2.0-dev \
 		&& apt-get clean \
 		&& rm -rf /var/lib/apt/lists/*
 COPY --from=builder /out /usr
+COPY --from=builder /iotivity.list /usr/share/
+COPY iotivity_export.sh /usr/bin/
