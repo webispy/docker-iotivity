@@ -1,40 +1,39 @@
 # Temporary image for IoTivity build
-FROM ubuntu:xenial as builder
+FROM multiarch/crossbuild as builder
+
 ARG RELEASE=false
 ARG LOG_LEVEL=ERROR
 ARG SECURED=1
 
 # Use PREFIX to /out instead of /usr to remove RPATH
-ENV RELEASE=$RELEASE \
+ENV CROSS_TRIPLE={cross} \
+    RELEASE=$RELEASE \
     LOG_LEVEL=$LOG_LEVEL \
     SECURED=$SECURED \
     PREFIX=/out \
     DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && apt-get install -y \
-		ca-certificates language-pack-en \
+ENV SCONS_OPTS="TARGET_ARCH={arch} TC_PREFIX={cross}- SECURED=${SECURED} RELEASE=${RELEASE} RD_MODE=CLIENT LOG_LEVEL=${LOG_LEVEL} TARGET_TRANSPARENT=IP -j4 --prefix=${PREFIX}" \
+    PKG_CONFIG_PATH=/usr/lib/{cross}/pkgconfig
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+		ca-certificates \
 		build-essential \
 		git \
 		scons \
 		ssh \
 		unzip \
-		sudo \
-		valgrind \
 		doxygen \
 		libtool \
 		autoconf \
 		pkg-config \
-		libboost-all-dev \
-		libsqlite3-dev \
-		uuid-dev \
-		libglib2.0-dev \
-		libcurl4-gnutls-dev \
-		libbz2-dev \
+		libsqlite3-dev:{dist} \
+		uuid-dev:{dist} \
+		libglib2.0-dev:{dist} \
+		libcurl4-gnutls-dev:{dist} \
+		libbz2-dev:{dist} \
 		cmake \
 		chrpath \
-		rpm \
-		ubuntu-dev-tools \
-		debhelper \
 		sed \
 		apt-utils \
 		&& apt-get clean \
@@ -44,6 +43,8 @@ COPY patch/* /tmp/
 
 # - clone iotivity and related sources
 # - apply custom patch (patch/*)
+# - fix to use PKG_CONFIG_PATH
+# - remove --coverage flags
 # - remove RPATH from executable and shared library
 # - modify iotivity.pc (replace prefix)
 RUN git clone --depth 1 http://github.com/iotivity/iotivity -b 1.3.1 \
@@ -52,8 +53,15 @@ RUN git clone --depth 1 http://github.com/iotivity/iotivity -b 1.3.1 \
 	&& git clone --depth 1 http://github.com/ARMmbed/mbedtls.git extlibs/mbedtls/mbedtls -b mbedtls-2.4.2 \
 	&& git apply /tmp/00*.patch \
 	&& rm /tmp/00*.patch \
-	&& scons --silent SECURED=${SECURED} RELEASE=${RELEASE} RD_MODE=CLIENT LOG_LEVEL=${LOG_LEVEL} TARGET_TRANSPORT=IP -j8 --prefix=${PREFIX} \
-	&& scons SECURED=${SECURED} RELEASE=${RELEASE} RD_MODE=CLIENT LOG_LEVEL=${LOG_LEVEL} TARGET_TRANSPORT=IP -j8 --prefix=${PREFIX} install \
+	&& echo $PKG_CONFIG_PATH \
+	&& echo $SCONS_OPTS \
+	&& sed -i "378i\env['ENV']['PKG_CONFIG_PATH'] = os.environ.get('PKG_CONFIG_PATH')" build_common/SConscript \
+	&& sed -i "23,26d" build_common/linux/SConscript \
+	&& scons $SCONS_OPTS \
+	&& echo "Build done." \
+	&& scons install $SCONS_OPTS \
+	&& echo "Install done." \
+	&& ls -al / \
 	&& find /out -type f -executable -exec chrpath -d "{}" \; \
 	&& find /out -type f -iname "lib*.so" -exec chrpath -d "{}" \; \
 	&& sed -i 's/prefix=\/out/prefix=\/usr/g' /out/lib/pkgconfig/iotivity.pc \
@@ -63,9 +71,9 @@ RUN git clone --depth 1 http://github.com/iotivity/iotivity -b 1.3.1 \
 
 # Release image
 # - included git, pkg-config and cmake for convenience
-FROM ubuntu:xenial
+FROM multiarch/ubuntu-core:{dist}-xenial
 LABEL maintainer="webispy@gmail.com" \
-      version="0.4" \
+      version="0.5" \
       description="IoTivity development environment"
 RUN apt-get update && apt-get install -y --no-install-recommends \
 		build-essential \

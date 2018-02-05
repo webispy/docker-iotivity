@@ -1,0 +1,130 @@
+From b4d332c57bc4ba2c4440152837197a1e09e41a16 Mon Sep 17 00:00:00 2001
+From: Inho Oh <webispy@gmail.com>
+Date: Mon, 5 Feb 2018 18:33:14 +0900
+Subject: [PATCH] scons: disable boost related build
+
+Signed-off-by: Inho Oh <webispy@gmail.com>
+---
+ SConstruct                                     | 2 +-
+ build_common/linux/SConscript                  | 4 ++--
+ iotivity.pc.in                                 | 2 +-
+ plugins/SConscript                             | 2 +-
+ resource/SConscript                            | 8 ++++----
+ resource/csdk/SConscript                       | 4 ++--
+ resource/csdk/security/provisioning/SConscript | 2 +-
+ 7 files changed, 12 insertions(+), 12 deletions(-)
+
+diff --git a/SConstruct b/SConstruct
+index 36256b49b..e96f87a88 100644
+--- a/SConstruct
++++ b/SConstruct
+@@ -63,7 +63,7 @@ build_dir = env.get('BUILD_DIR')
+ # Build 'resource' sub-project
+ SConscript(build_dir + 'resource/SConscript')
+ 
+-if target_os not in ['arduino','darwin','ios', 'android', 'msys_nt', 'windows']:
++if target_os not in ['linux', 'arduino','darwin','ios', 'android', 'msys_nt', 'windows']:
+     SConscript(build_dir + 'examples/OICMiddle/SConscript')
+ 
+ java_build = None
+diff --git a/build_common/linux/SConscript b/build_common/linux/SConscript
+index 0a3ee4105..f2fafe71d 100644
+--- a/build_common/linux/SConscript
++++ b/build_common/linux/SConscript
+@@ -57,8 +57,8 @@ if LooseVersion(gcc_ver) < LooseVersion('5.0'):
+     env.AppendUnique(CFLAGS=['-Wno-missing-field-initializers'])
+     env.AppendUnique(CCFLAGS=['-Wno-missing-braces'])
+ 
+-if env.get('ERROR_ON_WARN'):
+-    env.AppendUnique(CFLAGS=['-Werror'])
++#if env.get('ERROR_ON_WARN'):
++#    env.AppendUnique(CFLAGS=['-Werror'])
+ 
+ # Set arch flags that match best TARGET_ARCH variable
+ if not env.get('WITH_ENV'):
+diff --git a/iotivity.pc.in b/iotivity.pc.in
+index d3d88a1bd..82e8c0537 100644
+--- a/iotivity.pc.in
++++ b/iotivity.pc.in
+@@ -11,7 +11,7 @@ Description: IoTivity is an open source reference implementation of the OIC stan
+ Version: @VERSION@
+ URL: https://www.iotivity.org
+ Requires:
+-Libs: -L${libdir} -loc -loc_logger -loc_logger_core -loctbstack -lconnectivity_abstraction @LIBS@
++Libs: -L${libdir} -loctbstack -lconnectivity_abstraction @LIBS@
+ Cflags: -I${includedir}/resource \
+ 			-I${includedir}/resource/stack \
+ 			-I${includedir}/resource/oc_logger \
+diff --git a/plugins/SConscript b/plugins/SConscript
+index 3decb7249..99409d89f 100644
+--- a/plugins/SConscript
++++ b/plugins/SConscript
+@@ -30,7 +30,7 @@ build_sample = env.get('BUILD_SAMPLE')
+ src_dir = env.get('SRC_DIR')
+ 
+ if target_os not in [
+-        'android', 'arduino', 'darwin', 'ios', 'tizen', 'msys_nt', 'windows'
++        'linux', 'android', 'arduino', 'darwin', 'ios', 'tizen', 'msys_nt', 'windows'
+ ]:
+ 
+     SConscript('zigbee_wrapper/SConscript')
+diff --git a/resource/SConscript b/resource/SConscript
+index 3ec59999c..5799ad359 100644
+--- a/resource/SConscript
++++ b/resource/SConscript
+@@ -39,22 +39,22 @@ SConscript('#extlibs/libcoap/SConscript')
+ # Build csdk
+ SConscript('csdk/SConscript')
+ 
+-if target_os not in ['arduino', 'darwin', 'ios']:
++if target_os not in ['arduino', 'darwin', 'ios', 'linux']:
+     # Build liboc_logger
+     SConscript('oc_logger/SConscript')
+ 
+     # Build liboc
+     SConscript('src/SConscript')
+ 
+-if target_os in ['windows', 'linux']:
++if target_os in ['windows']:
+     # Build IoTivity Procedural Client API
+     SConscript('IPCA/SConscript')
+ 
+-if target_os not in ['arduino','darwin','ios','android']:
++if target_os not in ['linux', 'arduino','darwin','ios','android']:
+     # Build examples
+     SConscript('examples/SConscript')
+ 
+-if target_os in ['linux', 'windows', 'darwin', 'msys_nt']:
++if target_os in ['windows', 'darwin', 'msys_nt']:
+     if target_os == 'darwin':
+         env.Command('#/out/darwin/iotivity-csdk.framework', None, '#/tools/darwin/mkfwk_osx.sh')
+ 
+diff --git a/resource/csdk/SConscript b/resource/csdk/SConscript
+index 5ed927d02..4fa8eed7f 100644
+--- a/resource/csdk/SConscript
++++ b/resource/csdk/SConscript
+@@ -38,8 +38,8 @@ if env.get('ROUTING') in ['GW', 'EP']:
+     # Build Routing
+     SConscript('routing/SConscript')
+ 
+-if 'CLIENT' in rd_mode or 'SERVER' in rd_mode:
+-    SConscript('resource-directory/SConscript')
++#if 'CLIENT' in rd_mode or 'SERVER' in rd_mode:
++#    SConscript('resource-directory/SConscript')
+ 
+ # Build libocsrm
+ SConscript('security/SConscript')
+diff --git a/resource/csdk/security/provisioning/SConscript b/resource/csdk/security/provisioning/SConscript
+index 62a2c862c..3004d4737 100644
+--- a/resource/csdk/security/provisioning/SConscript
++++ b/resource/csdk/security/provisioning/SConscript
+@@ -48,5 +48,5 @@ if 'g++' in provisioning_env.get('CXX'):
+ 
+ SConscript('src/SConscript', 'provisioning_env')
+ 
+-if target_os in ['linux', 'msys_nt', 'windows', 'tizen']:
++if target_os in ['msys_nt', 'windows', 'tizen']:
+     SConscript('sample/SConscript', 'provisioning_env')
+-- 
+2.14.1
+
