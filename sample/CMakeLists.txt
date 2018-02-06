@@ -42,8 +42,8 @@ TARGET_LINK_LIBRARIES(${PROJECT_NAME} ${pkgs_LDFLAGS} ${iotivity_pkgs_LDFLAGS})
 ADD_EXECUTABLE(${PROJECT_NAME}_static ${SRCS})
 TARGET_LINK_LIBRARIES(${PROJECT_NAME}_static
 	/usr/lib/liboctbstack.a
-	/usr/lib/liblogger.a
 	/usr/lib/libconnectivity_abstraction.a
+	/usr/lib/liblogger.a
 	/usr/lib/libocsrm.a
 	/usr/lib/libmbedx509.a
 	/usr/lib/libmbedtls.a
