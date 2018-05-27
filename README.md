@@ -29,7 +29,7 @@ All images are based on [multiarch/ubuntu-core](https://hub.docker.com/r/multiar
 
 ```sh
 # Get sample code
-$ docker clone https://github.com/webispy/docker-iotivity
+$ git clone https://github.com/webispy/docker-iotivity
 
 # Build
 $ docker run -t --rm -v ~/docker-iotivity/sample:/src webispy/iotivity:amd64 \
